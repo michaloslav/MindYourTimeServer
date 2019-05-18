@@ -145,7 +145,7 @@ function mergeProjectsOrBreaks(dbData, localData, mergedData, key, resetInProgre
 module.exports = function mergeData(dbData, localData){
   localData = dataValidation(localData) // validate first
 
-  console.log("\nDB:", dbData, "\nLocal:", localData, "\n");
+  console.log("\nDB:", JSON.stringify(dbData), "\nLocal:", JSON.stringify(localData), "\n");
   var mergedData = JSON.parse(JSON.stringify(dbData))
 
   // handle undefined
@@ -243,6 +243,6 @@ module.exports = function mergeData(dbData, localData){
     }
   })
 
-  console.log(mergedData, modifiedData, "\n\n")
+  console.log(JSON.stringify(mergedData), JSON.stringify(modifiedData), "\n\n")
   return { mergedData, modifiedData }
 }
