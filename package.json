@@ -1,0 +1,15 @@
+{
+  "name": "mindyourtimeserver",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "google-auth-library": "^3.0.1",
+    "mongojs": "^2.6.0",
+    "socket.io": "^2.2.0"
+  }
+}
