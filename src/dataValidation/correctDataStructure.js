@@ -1,4 +1,4 @@
-const defaultSettings = require("./defaultSettings")
+const defaultSettings = require('./defaultSettings')
 
 // define types
 const numberOptional = {type: "number"}
@@ -104,4 +104,5 @@ const correctDataStructure = {
   lastModified: object(lastModifiedStructure)
 }
 
+debugger
 module.exports = correctDataStructure

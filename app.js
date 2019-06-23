@@ -9,10 +9,10 @@ const app = express()
 
 const io = socketIO(app)
 
-const handleSocketIO = require('./handleSocketIO')
+const handleSocketIO = require('./src/handleSocketIO')
 io.on('connection', handleSocketIO);
 
-const pinging = require('./util/pinging')
+const pinging = require('./src/pinging')
 pinging()
 
 module.exports = app;

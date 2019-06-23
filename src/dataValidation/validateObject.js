@@ -1,53 +1,5 @@
-const {mergeObjects} = require('./objectUtil')
-const correctDataStructure = require('./correctDataStructure')
-const defaultSettings = require("./defaultSettings")
-
-function lastModifiedSysNoteToDates(sysNote){
-  var lastModified = {}
-  Object.entries(sysNote).forEach(([key, val]) => {
-    if(typeof val === "object") lastModified[key] = lastModifiedSysNoteToDates(val)
-    else lastModified[key] = new Date()
-  })
-  return lastModified
-}
-
-function getCorrectDataStructureSection(keys){
-  if(typeof keys === "string") console.warn("Keys must be an array!")
-
-  var warningMessage = `Incorrect property detected in data: ${keys.join(".")} should not be defined`
-  try{
-    var result = keys.reduce((section, key) => section[key], correctDataStructure)
-  }
-  catch(e){
-    console.warn(warningMessage)
-    console.warn(e)
-  }
-  if(!result) console.warn(warningMessage)
-
-  return result
-}
-
-function validatePrimitive(keys, val){
-  var correctDataStructureSection = getCorrectDataStructureSection(keys)
-  if(!correctDataStructureSection) return
-
-  let expectedType = correctDataStructureSection.type
-  let actualType = typeof val
-
-  if(expectedType === actualType ||
-    (// allow numbers to be in the form of a string
-      expectedType === "number" &&
-      actualType === "string" &&
-      !isNaN(parseFloat(val))
-    ) ||
-    (// allows bools in the form of a strings
-      expectedType === "boolean" &&
-      actualType === "string" &&
-      (val === "true" || val === "false")
-    )
-  ) return val
-  else console.warn(`Incorrect type detected in data: ${keys.join(".")} is '${val}' which is of type ${actualType}, should be of type ${expectedType}`)
-}
+const getCorrectDataStructureSection = require('./getCorrectDataStructureSection')
+const validatePrimitive = require('./validatePrimitive')
 
 function validateObject(keys, val){
   var correctedVal
@@ -129,34 +81,4 @@ function validateObject(keys, val){
   return correctedVal
 }
 
-function dataValidation(data){
-  var correctedData = {}
-
-  for(let [key, val] of Object.entries(data)){
-    if(!correctDataStructure[key]){
-      console.warn(`Incorrect key in data: ${key}`)
-      continue
-    }
-    if(correctDataStructure[key].type === "object"){
-      correctedData[key] = validateObject([key], val)
-      if(correctedData[key].__lastModifiedSysNote){
-        if(!correctedData.__lastModifiedSysNote) correctedData.__lastModifiedSysNote = {}
-        correctedData.__lastModifiedSysNote[key] = correctedData[key].__lastModifiedSysNote
-        delete correctedData[key].__lastModifiedSysNote
-      }
-    }
-    else correctedData[key] = validatePrimitive([key], val)
-  }
-
-  if(correctedData.__lastModifiedSysNote){
-    let newLastModifiedItems = lastModifiedSysNoteToDates(correctedData.__lastModifiedSysNote)
-    delete correctedData.__lastModifiedSysNote
-
-    if(!correctedData.lastModified) correctedData.lastModified = newLastModifiedItems
-    else correctedData.lastModified = mergeObjects(correctedData.lastModified, newLastModifiedItems)
-  }
-
-  return correctedData
-}
-
-module.exports = dataValidation
+module.exports = validateObject
